@@ -13,7 +13,7 @@ void checkMQTTConnection() {
         Serial.println(F("connected"));
         for (int i = 0; i < noSubscribedTopics; i++) 
         {
-          client.subscribe(subscribedTopics[i].c_str());
+          client.subscribe(subscribedTopics[i]->c_str());
         }
         client.publish(pongStatusTopic.c_str(), "connected");
       } else {
