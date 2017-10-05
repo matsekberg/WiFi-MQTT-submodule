@@ -7,8 +7,6 @@
 
 #include <ArduinoJson.h>          //https://github.com/bblanchon/ArduinoJson
 
-#define CONFIG_VERSION "002WESH"
-
 //flag for saving data
 bool shouldSaveConfig = false;
 
@@ -24,7 +22,7 @@ void saveConfigCallback () {
 // Init thw WiFiManager
 // If zapall is true the confiuration will be completely zapped
 //
-void initWifiManager(boolean zapall) {
+void initWifiManager(const char* configVersion, boolean zapall) {
 
   Serial.println(F("initWifiManager"));
   if (zapall)
@@ -53,7 +51,7 @@ void initWifiManager(boolean zapall) {
         if (json.success())
         {
           Serial.println(F("\nparsed json"));
-          if (json.containsKey("cfg_version") && !strcasecmp_P(json["cfg_version"], CONFIG_VERSION))
+          if (json.containsKey("cfg_version") && !strcasecmp_P(json["cfg_version"], configVersion))
           {
             strcpy(mqtt_server, json["mqtt_server"]);
             strcpy(mqtt_port, json["mqtt_port"]);
@@ -158,7 +156,7 @@ void initWifiManager(boolean zapall) {
     Serial.println(F("saving config"));
     DynamicJsonBuffer jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
-    json["cfg_version"] = CONFIG_VERSION;
+    json["cfg_version"] = configVersion;
     json["mqtt_server"] = mqtt_server;
     json["mqtt_port"] = mqtt_port;
     json["mqtt_user"] = mqtt_user;
@@ -181,10 +179,10 @@ void initWifiManager(boolean zapall) {
   Serial.println(WiFi.localIP());
 }
 
-String getDeviceMeta() {
+String getDeviceMeta(const char* configVersion) {
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.createObject();
-  json["cfg_version"] = CONFIG_VERSION;
+  json["cfg_version"] = configVersion;
   json["local_ip"] = WiFi.localIP().toString();
   json["unit_id"] = unit_id;
   json["group_id"] = group_id;
