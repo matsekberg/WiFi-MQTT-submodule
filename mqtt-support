@@ -15,11 +15,7 @@ void checkMQTTConnection() {
         {
           client.subscribe(subscribedTopics[i].c_str());
         }
-        //client.subscribe(pingTopic.c_str());
-        //client.subscribe(actionTopic.c_str());
-        //client.subscribe(groupActionTopic.c_str());
         client.publish(pongStatusTopic.c_str(), "connected");
-        //client.subscribe(matrixActionTopic.c_str());
       } else {
         Serial.print(F("failed, rc="));
         Serial.println(client.state());
