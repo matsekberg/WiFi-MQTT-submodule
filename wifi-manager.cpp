@@ -169,6 +169,12 @@ void wifiSetup(const char* configVersion, boolean zapall) {
   Serial.println();
   Serial.println(F("local ip"));
   Serial.println(WiFi.localIP());
+
+  // OTA setup
+  ArduinoOTA.setPort(OTA_PORT);
+  ArduinoOTA.setHostname(custom_unit_id.getValue());
+  ArduinoOTA.setPassword(OTA_PASS);
+  ArduinoOTA.begin();
 }
 
 void wifiLoop() {
@@ -188,7 +194,7 @@ void wifiLoop() {
   if (configWifi) {
     espClient.stop();
     delay(1000);
-    initWifiManager(CONFIG_VERSION, true);
+    wifiSetup(CONFIG_VERSION, true);
   }
 }
 
