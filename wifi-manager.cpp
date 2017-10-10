@@ -17,7 +17,7 @@ void saveConfigCallback () {
 //
 void wifiSetup(const char* configVersion, boolean zapall) {
 
-  Serial.println(F("initWifiManager"));
+  Serial.println(F("wifiSetup"));
   if (zapall)
     Serial.println(F("Wifi zap requested"));
 
@@ -182,7 +182,7 @@ void wifiLoop() {
   // do so now. (just the once)
   if (!printedWifiToSerial && WiFi.status() == WL_CONNECTED) {
     Serial.println(F("WiFi connected"));
-    Serial.println(F("IP address: "));
+    Serial.print(F("IP address: "));
     Serial.println(WiFi.localIP());
     printedWifiToSerial = true;
   }

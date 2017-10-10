@@ -32,8 +32,9 @@ void localMQTTCallback(char* topic, byte* payload, unsigned int length) {
 }
 
 void mqttSetup(void) {
-	// create specific topics
-	mqttCallbackCreateTopics();
+  Serial.println(F("mqttSetup"));
+  // create specific topics
+  mqttCallbackCreateTopics();
 
   // after wifi and parameters are configured, create publish topics
   eventTopic = String(F("event/")) + custom_unit_id.getValue() + String(F("/switch"));
@@ -58,7 +59,46 @@ void mqttLoop() {
 }
 
 
+//
+// Connect to MQTT broker
+// Subscribe to topics, flash LED etc
+//
+void mqttCheckConnection(void) {
+
+  if (!client.connected())
+    {
+    if (WiFi.status() == WL_CONNECTED) {
+      //Wifi connected, attempt to connect to server
+      Serial.print(F("new MQTT connection: "));
+      if (client.connect(custom_unit_id.getValue(), custom_mqtt_user.getValue(), custom_mqtt_pass.getValue())) {
+        Serial.println(F("connected"));
+          client.subscribe(pingSTopic.c_str());
+          client.subscribe(actionSTopic.c_str());
+          client.subscribe(groupActionSTopic.c_str());
+        for (int i = 0; i < noSubscribedTopics; i++) 
+        {
+          client.subscribe(subscribedTopics[i]->c_str());
+        }
+        client.publish(pongStatusTopic.c_str(), "connected");
+      } else {
+        Serial.print(F("failed, rc="));
+        Serial.println(client.state());
+      }
+    }
+    else {
+      //Wifi isn't connected, so no point in trying now.
+      Serial.println(F(" Not connected to WiFI AP, abandoned connect."));
+    }
+  }
+  //Set the status LED to ON if we are connected to the MQTT server
+  if (client.connected())
+    digitalWrite(LED_PIN, LOW);
+  else
+    digitalWrite(LED_PIN, HIGH);
+}
+
 void mqttPublish(void) {
+  mqttCheckConnection();
     // Relay state is updated via the interrupt *OR* the MQTT callback.
   if (relayState != desiredRelayState) {
     Serial.print(F("Chg state to "));
@@ -109,40 +149,4 @@ void mqttPublish(void) {
   }
 }
 
-//
-// Connect to MQTT broker
-// Subscribe to topics, flash LED etc
-//
-void mqttCheckConnection(void) {
-  Serial.print(F("MQTT conn? "));
-  if (client.connected()) Serial.println(F("OK"));
-  else {
-    if (WiFi.status() == WL_CONNECTED) {
-      //Wifi connected, attempt to connect to server
-      Serial.print(F("new connection: "));
-      if (client.connect(custom_unit_id.getValue(), custom_mqtt_user.getValue(), custom_mqtt_pass.getValue())) {
-        Serial.println(F("connected"));
-          client.subscribe(pingSTopic.c_str());
-          client.subscribe(actionSTopic.c_str());
-          client.subscribe(groupActionSTopic.c_str());
-        for (int i = 0; i < noSubscribedTopics; i++) 
-        {
-          client.subscribe(subscribedTopics[i]->c_str());
-        }
-        client.publish(pongStatusTopic.c_str(), "connected");
-      } else {
-        Serial.print(F("failed, rc="));
-        Serial.println(client.state());
-      }
-    }
-    else {
-      //Wifi isn't connected, so no point in trying now.
-      Serial.println(F(" Not connected to WiFI AP, abandoned connect."));
-    }
-  }
-  //Set the status LED to ON if we are connected to the MQTT server
-  if (client.connected())
-    digitalWrite(LED_PIN, LOW);
-  else
-    digitalWrite(LED_PIN, HIGH);
-}
+
