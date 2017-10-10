@@ -44,6 +44,11 @@ volatile boolean configWifi = false;
 volatile boolean sendEvent = true;
 boolean sendStatus = true;
 boolean sendPong = false;
+boolean sendSensors = false;
 
 unsigned long lastMQTTCheck = -MQTT_CHECK_MS; //This will force an immediate check on init.
 bool printedWifiToSerial = false;
+
+
+
+void setupMQTT(void);
