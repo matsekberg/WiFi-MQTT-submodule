@@ -33,7 +33,7 @@ void localMQTTCallback(char* topic, byte* payload, unsigned int length) {
 
 void mqttSetup(void) {
 	// create specific topics
-	mqttCreateTopics();
+	mqttCallbackCreateTopics();
 
   // after wifi and parameters are configured, create publish topics
   eventTopic = String(F("event/")) + custom_unit_id.getValue() + String(F("/switch"));
