@@ -15,7 +15,7 @@ void saveConfigCallback () {
 // Init thw WiFiManager
 // If zapall is true the confiuration will be completely zapped
 //
-void initWifiManager(const char* configVersion, boolean zapall) {
+void wifiSetup(const char* configVersion, boolean zapall) {
 
   Serial.println(F("initWifiManager"));
   if (zapall)
@@ -169,6 +169,27 @@ void initWifiManager(const char* configVersion, boolean zapall) {
   Serial.println();
   Serial.println(F("local ip"));
   Serial.println(WiFi.localIP());
+}
+
+void wifiLoop() {
+  // If we haven't printed WiFi details to Serial port yet, and WiFi now connected,
+  // do so now. (just the once)
+  if (!printedWifiToSerial && WiFi.status() == WL_CONNECTED) {
+    Serial.println(F("WiFi connected"));
+    Serial.println(F("IP address: "));
+    Serial.println(WiFi.localIP());
+    printedWifiToSerial = true;
+  }
+
+  // Handle any pending OTA SW updates
+  ArduinoOTA.handle();
+
+  // Handle looong touch to reconfigure all parameters
+  if (configWifi) {
+    espClient.stop();
+    delay(1000);
+    initWifiManager(CONFIG_VERSION, true);
+  }
 }
 
 String getDeviceMeta(const char* configVersion) {

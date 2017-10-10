@@ -62,11 +62,16 @@ bool printedWifiToSerial = false;
 
 // this method needs to be called from setup()
 void mqttSetup(void);
+void mqttLoop(void);
+void mqttCheckConnection(void);
 
 
 // these methods needs to be implemented
 void mqttCallbackCreateTopics(void);
 void mqttCallbackHandle(char* topic, byte* payload, unsigned int length);
+
+// internal deps
+String getDeviceMeta(const char* configVersion);
 
 WiFiManagerParameter custom_mqtt_server = NULL;
 WiFiManagerParameter custom_mqtt_port = NULL;

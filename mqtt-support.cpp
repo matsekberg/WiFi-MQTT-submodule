@@ -21,13 +21,13 @@ void localMQTTCallback(char* topic, byte* payload, unsigned int length) {
       sendStatus = true;
     }
 
-  } else if (!strcmp(topic, pingSTopic.c_str()))
+  } 
+  else if (!strcmp(topic, pingSTopic.c_str()))
   // Ping action
   {
     sendPong = true;
   } else {
-    mqttCallbackHandle(topic, payload, length) {
-
+    mqttCallbackHandle(topic, payload, length);
   }
 }
 
@@ -50,6 +50,13 @@ void mqttSetup(void) {
   client.setCallback(localMQTTCallback);
 
 }
+
+void mqttLoop() {
+  // Handle any pending MQTT messages
+  client.loop();
+
+}
+
 
 void mqttPublish(void) {
     // Relay state is updated via the interrupt *OR* the MQTT callback.
@@ -106,7 +113,7 @@ void mqttPublish(void) {
 // Connect to MQTT broker
 // Subscribe to topics, flash LED etc
 //
-void checkMQTTConnection(void) {
+void mqttCheckConnection(void) {
   Serial.print(F("MQTT conn? "));
   if (client.connected()) Serial.println(F("OK"));
   else {
@@ -115,9 +122,9 @@ void checkMQTTConnection(void) {
       Serial.print(F("new connection: "));
       if (client.connect(custom_unit_id.getValue(), custom_mqtt_user.getValue(), custom_mqtt_pass.getValue())) {
         Serial.println(F("connected"));
-          client.subscribe(pingSTopic->c_str());
-          client.subscribe(actionSTopic->c_str());
-          client.subscribe(groupActionSTopic->c_str());
+          client.subscribe(pingSTopic.c_str());
+          client.subscribe(actionSTopic.c_str());
+          client.subscribe(groupActionSTopic.c_str());
         for (int i = 0; i < noSubscribedTopics; i++) 
         {
           client.subscribe(subscribedTopics[i]->c_str());
