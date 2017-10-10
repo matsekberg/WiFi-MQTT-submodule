@@ -46,6 +46,16 @@ boolean sendStatus = true;
 boolean sendPong = false;
 boolean sendSensors = false;
 
+String eventTopic;         // published when the switch is touched
+String groupEventTopic;    // published when the switch was long touched
+String statusTopic;        // published when the relay changes state wo switch touch
+String pongStatusTopic;    // publish node status topic
+String pongMetaTopic;      // publish node meta topic
+String pingSTopic;         // subscribe to nodes ping topic
+String actionSTopic;       // subscribed to to change relay status
+String groupActionSTopic;  // subscribed to to change relay status based on groupid
+
+
 unsigned long lastMQTTCheck = -MQTT_CHECK_MS; //This will force an immediate check on init.
 bool printedWifiToSerial = false;
 
