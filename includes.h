@@ -62,3 +62,16 @@ bool printedWifiToSerial = false;
 
 
 void setupMQTT(void);
+
+
+// these methods needs to be implemented
+void mqttCallbackCreateTopics(void);
+void mqttCallbackHandle(char* topic, byte* payload, unsigned int length);
+
+WiFiManagerParameter custom_mqtt_server = NULL;
+WiFiManagerParameter custom_mqtt_port = NULL;
+WiFiManagerParameter custom_mqtt_user = NULL;
+WiFiManagerParameter custom_mqtt_pass = NULL;
+WiFiManagerParameter custom_unit_id = NULL;
+WiFiManagerParameter custom_group_id = NULL;
+

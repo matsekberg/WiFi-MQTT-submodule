@@ -1,6 +1,39 @@
+
+
+void localMQTTCallback(char* topic, byte* payload, unsigned int length) {
+  // Relay actions
+  if (!strcmp(topic, actionSTopic.c_str()) || !strcmp(topic, groupActionSTopic.c_str()))
+  {
+    if ((char)payload[0] == '1' || ! strncasecmp_P((char *)payload, "on", length))
+    {
+      desiredRelayState = 1;
+    }
+    else if ((char)payload[0] == '0' || ! strncasecmp_P((char *)payload, "off", length))
+    {
+      desiredRelayState = 0;
+    }
+    else if ((char)payload[0] == 'X' || ! strncasecmp_P((char *)payload, "toggle", length))
+    {
+      desiredRelayState = !desiredRelayState;
+    }
+    else if ((char)payload[0] == 'S' || ! strncasecmp_P((char *)payload, "status", length))
+    {
+      sendStatus = true;
+    }
+
+  } else if (!strcmp(topic, pingSTopic.c_str()))
+  // Ping action
+  {
+    sendPong = true;
+  } else {
+    mqttCallbackHandle(topic, payload, length) {
+
+  }
+}
+
 void setupMQTT(void) {
 	// create specific topics
-	createTopics();
+	mqttCreateTopics();
 
   // after wifi and parameters are configured, create publish topics
   eventTopic = String(F("event/")) + custom_unit_id.getValue() + String(F("/switch"));
@@ -14,10 +47,60 @@ void setupMQTT(void) {
   pingSTopic = String(F("ping/nodes"));
 
   client.setServer(custom_mqtt_server.getValue(), atoi(custom_mqtt_port.getValue()));
-  client.setCallback(handleMQTT);
+  client.setCallback(localMQTTCallback);
 
 }
 
+void mqttPublish(void) {
+    // Relay state is updated via the interrupt *OR* the MQTT callback.
+  if (relayState != desiredRelayState) {
+    Serial.print(F("Chg state to "));
+    Serial.println(desiredRelayState);
+
+    digitalWrite(RELAY_PIN, desiredRelayState);
+    relayState = desiredRelayState;
+    sendStatus = true;
+  }
+
+
+  if (sendPong)
+  {
+    Serial.print(F("MQTT pub: "));
+    String meta = getDeviceMeta(CONFIG_VERSION);
+    Serial.print(meta);
+    Serial.print(F(" to "));
+    Serial.println(pongMetaTopic);
+    client.publish(pongMetaTopic.c_str(), meta.c_str());
+    sendPong = false;
+  }
+
+  // publish event if touched
+  if (sendEvent) {
+    const char* payload = (relayState == 0) ? "0" : "1";
+    Serial.print(F("MQTT pub: "));
+    Serial.print(payload);
+    Serial.print(F(" to "));
+    if (sendGroupEventTopic) {
+      Serial.println(groupEventTopic);
+      client.publish(groupEventTopic.c_str(), payload);
+    } else {
+      Serial.println(eventTopic);
+      client.publish(eventTopic.c_str(), payload);
+    }
+    sendEvent = false;
+  }
+
+  // publish state when requested to do so
+  if (sendStatus) {
+    const char* payload = (relayState == 0) ? "0" : "1";
+    Serial.print(F("MQTT pub: "));
+    Serial.print(payload);
+    Serial.print(F(" to "));
+    Serial.println(statusTopic);
+    client.publish(statusTopic.c_str(), payload);
+    sendStatus = false;
+  }
+}
 
 //
 // Connect to MQTT broker
