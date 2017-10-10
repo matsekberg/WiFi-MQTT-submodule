@@ -14,7 +14,7 @@ void setupMQTT(void) {
   pingSTopic = String(F("ping/nodes"));
 
   client.setServer(custom_mqtt_server.getValue(), atoi(custom_mqtt_port.getValue()));
-  client.setCallback(MQTTcallback);
+  client.setCallback(handleMQTT);
 
 }
 
