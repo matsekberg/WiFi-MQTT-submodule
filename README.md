@@ -9,3 +9,6 @@
     git submodule update --remote --merge
     
     
+#### How to commit and push changes made in the support folder in another project:
+
+    ?
