@@ -45,7 +45,6 @@ volatile boolean sendGroupEventTopic = false;
 volatile boolean sendEvent = true;
 boolean sendStatus = true;
 boolean sendPong = false;
-boolean sendSensors = false;
 
 String eventTopic;         // published when the switch is touched
 String groupEventTopic;    // published when the switch was long touched
