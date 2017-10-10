@@ -60,8 +60,8 @@ unsigned long lastMQTTCheck = -MQTT_CHECK_MS; //This will force an immediate che
 bool printedWifiToSerial = false;
 
 
-
-void setupMQTT(void);
+// this method needs to be called from setup()
+void mqttSetup(void);
 
 
 // these methods needs to be implemented

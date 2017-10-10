@@ -31,7 +31,7 @@ void localMQTTCallback(char* topic, byte* payload, unsigned int length) {
   }
 }
 
-void setupMQTT(void) {
+void mqttSetup(void) {
 	// create specific topics
 	mqttCreateTopics();
 
