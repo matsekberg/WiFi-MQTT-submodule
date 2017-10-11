@@ -55,9 +55,20 @@ void mqttSetup(void) {
 void mqttLoop() {
   // Handle any pending MQTT messages
   client.loop();
-
+  mqttUpdateLED();
 }
 
+
+void mqttPublishMessage(const char* topic, const char* payload) {
+  digitalWrite(LED_PIN, HIGH);
+  Serial.print(F("MQTT pub: "));
+  Serial.print(topic);
+  Serial.print(F(" to "));
+  Serial.println(payload);
+  client.publish(topic, payload);
+  delay(50);
+  mqttUpdateLED();
+}
 
 //
 // Connect to MQTT broker
@@ -69,7 +80,10 @@ void mqttCheckConnection(void) {
     {
     if (WiFi.status() == WL_CONNECTED) {
       //Wifi connected, attempt to connect to server
-      Serial.print(F("new MQTT connection: "));
+      connections++;
+      Serial.print(F("new MQTT connection "));
+      Serial.print(connections);
+      Serial.print(F(" "));
       if (client.connect(custom_unit_id.getValue(), custom_mqtt_user.getValue(), custom_mqtt_pass.getValue())) {
         Serial.println(F("connected"));
           client.subscribe(pingSTopic.c_str());
@@ -79,7 +93,7 @@ void mqttCheckConnection(void) {
         {
           client.subscribe(subscribedTopics[i]->c_str());
         }
-        client.publish(pongStatusTopic.c_str(), "connected");
+        mqttPublishMessage(pongStatusTopic.c_str(), (String("connected,") + String(connections)).c_str());
       } else {
         Serial.print(F("failed, rc="));
         Serial.println(client.state());
@@ -90,12 +104,16 @@ void mqttCheckConnection(void) {
       Serial.println(F(" Not connected to WiFI AP, abandoned connect."));
     }
   }
+}
+
+void mqttUpdateLED(void) {
   //Set the status LED to ON if we are connected to the MQTT server
   if (client.connected())
     digitalWrite(LED_PIN, LOW);
   else
     digitalWrite(LED_PIN, HIGH);
 }
+
 
 void mqttPublish(void) {
   mqttCheckConnection();
@@ -117,7 +135,7 @@ void mqttPublish(void) {
     Serial.print(meta);
     Serial.print(F(" to "));
     Serial.println(pongMetaTopic);
-    client.publish(pongMetaTopic.c_str(), meta.c_str());
+    mqttPublishMessage(pongMetaTopic.c_str(), meta.c_str());
     sendPong = false;
   }
 
@@ -129,10 +147,10 @@ void mqttPublish(void) {
     Serial.print(F(" to "));
     if (sendGroupEventTopic) {
       Serial.println(groupEventTopic);
-      client.publish(groupEventTopic.c_str(), payload);
+      mqttPublishMessage(groupEventTopic.c_str(), payload);
     } else {
       Serial.println(eventTopic);
-      client.publish(eventTopic.c_str(), payload);
+      mqttPublishMessage(eventTopic.c_str(), payload);
     }
     sendEvent = false;
   }
@@ -144,7 +162,7 @@ void mqttPublish(void) {
     Serial.print(payload);
     Serial.print(F(" to "));
     Serial.println(statusTopic);
-    client.publish(statusTopic.c_str(), payload);
+    mqttPublishMessage(statusTopic.c_str(), payload);
     sendStatus = false;
   }
 }

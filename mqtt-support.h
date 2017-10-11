@@ -26,14 +26,34 @@
 //--#define OTA_PASS "UPDATE_PW"
 //--#define OTA_PORT 8266
 
+#ifdef TH10
+#define BUTTON_PIN  0  // GPIO0,  pin 18, D3
+#define LED_PIN    13  // GPIO13, pin 7,  D7
+#define RELAY_PIN  12  // GPIO12, pin 6,  D6
+#endif
+
+#ifdef POW
 #define BUTTON_PIN  0  // GPIO0, pin 18, D3
 #define LED_PIN     2  // GPIO2, pin 17, D4
 #define RELAY_PIN   5  // GPIO5, pin 20, D1 (SCL)
-   
+#endif
+
+#ifdef S20
+#define BUTTON_PIN  0  // GPIO0, pin 18, D3
+#define LED_PIN     2  // GPIO2, pin 17, D4
+#define RELAY_PIN   5  // GPIO5, pin 20, D1 (SCL)
+#endif
+
+#ifdef TOUCH
+#define BUTTON_PIN  0  // GPIO0, pin 18, D3
+#define LED_PIN     2  // GPIO2, pin 17, D4
+#define RELAY_PIN   5  // GPIO5, pin 20, D1 (SCL)
+#endif
+
 //--WiFiClient espClient;
 PubSubClient client(espClient);
 unsigned long uptime = 0;
-
+unsigned int connections = 0;
 
 volatile int desiredRelayState = 0;
 volatile int relayState = 0;
@@ -63,8 +83,10 @@ unsigned long lastMQTTCheck = -MQTT_CHECK_MS; //This will force an immediate che
 // this method needs to be called from setup()
 void mqttSetup(void);
 void mqttLoop(void);
-void mqttCheckConnection(void);
 
+void mqttCheckConnection(void);
+void mqttUpdateLED(void);
+void mqttPublishMessage(const char* topic, const char* payload);
 
 // these methods needs to be implemented
 void mqttCallbackCreateTopics(void);
