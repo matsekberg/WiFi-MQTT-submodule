@@ -126,7 +126,7 @@ void wifiSetup(const char* configVersion, boolean zapall) {
   // fetches ssid and pass and tries to connect
   // if it does not connect it starts an access point with the device version as name
   // and goes into a blocking loop awaiting configuration
-  if (!wifiManager.autoConnect(configVersion, "wificonfig")) {
+  if (!wifiManager.autoConnect()) {
     Serial.println("failed to connect and hit timeout");
     delay(3000);
     // reset and try again, or maybe put it to deep sleep
