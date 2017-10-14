@@ -131,7 +131,7 @@ void wifiSetup(const char* configVersion, boolean zapall) {
   // Set WiFi to station mode and disconnect from an AP if it was previously connected
   WiFi.mode(WIFI_STA);
 
-  if (!wifiManager.autoConnect(szSSID, "pass")) {
+  if (!wifiManager.autoConnect(szSSID, "wificonfig")) {
     Serial.println("failed to connect and hit timeout");
     delay(3000);
     // reset and try again, or maybe put it to deep sleep
