@@ -126,7 +126,12 @@ void wifiSetup(const char* configVersion, boolean zapall) {
   // fetches ssid and pass and tries to connect
   // if it does not connect it starts an access point with the device version as name
   // and goes into a blocking loop awaiting configuration
-  if (!wifiManager.autoConnect()) {
+  char szSSID[10];
+  sprintf(szSSID, "ESP-%03d", (ESP.getChipId() % 1000));
+  // Set WiFi to station mode and disconnect from an AP if it was previously connected
+  WiFi.mode(WIFI_STA);
+
+  if (!wifiManager.autoConnect(szSSID, "pass")) {
     Serial.println("failed to connect and hit timeout");
     delay(3000);
     // reset and try again, or maybe put it to deep sleep
