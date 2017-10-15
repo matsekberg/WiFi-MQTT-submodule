@@ -40,8 +40,8 @@
 
 #ifdef S20
 #define BUTTON_PIN  0  // GPIO0, pin 18, D3
-#define LED_PIN     2  // GPIO2, pin 17, D4
-#define RELAY_PIN   5  // GPIO5, pin 20, D1 (SCL)
+#define LED_PIN     12  // GPIO2, pin 17, D4
+#define RELAY_PIN   13  // GPIO5, pin 20, D1 (SCL)
 #endif
 
 #ifdef TOUCH
