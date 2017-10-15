@@ -23,31 +23,48 @@
 #define CONFIG_TOUCHES_COUNT 3
 #define MQTT_CHECK_MS 15000
 
+#define PL_OFF    "off"
+#define PL_ON     "on"
+#define PL_TOGGLE "toggle"
+#define PL_STATUS "status"
+
 //--#define OTA_PASS "UPDATE_PW"
 //--#define OTA_PORT 8266
 
 #ifdef TH10
-#define BUTTON_PIN  0  // GPIO0,  pin 18, D3
-#define LED_PIN    13  // GPIO13, pin 7,  D7
-#define RELAY_PIN  12  // GPIO12, pin 6,  D6
+#define BUTTON_PIN  0  // GPIO0,  pin 15
+#define LED_PIN    13  // GPIO13, pin 12
+#define RELAY_PIN  12  // GPIO12, pin 6
+#define LEDON  LOW
+#define LEDOFF HIGH
 #endif
 
 #ifdef POW
-#define BUTTON_PIN  0  // GPIO0, pin 18, D3
-#define LED_PIN     2  // GPIO2, pin 17, D4
-#define RELAY_PIN   5  // GPIO5, pin 20, D1 (SCL)
+#define BUTTON_PIN  0  // GPIO0,  pin 15
+#define LED_PIN    15  // GPIO15, pin 13
+#define RELAY_PIN  12  // GPIO12, pin 10
+#define LEDON  HIGH
+#define LEDOFF LOW
+
+#define CF_PIN     14  // GPIO14, pin 9
+#define CF1_PIN    13  // GPIO13, pin 12
+#define SEL_PIN     5  // GPIO5,  pin 24
 #endif
 
 #ifdef S20
-#define BUTTON_PIN  0  // GPIO0, pin 18, D3
-#define LED_PIN     12  // GPIO2, pin 17, D4
-#define RELAY_PIN   13  // GPIO5, pin 20, D1 (SCL)
+#define BUTTON_PIN  0  // GPIO0,  pin 15
+#define LED_PIN    13  // GPIO13, pin 12
+#define RELAY_PIN  12  // GPIO12, pin 6
+#define LEDON  LOW
+#define LEDOFF HIGH
 #endif
 
 #ifdef TOUCH
-#define BUTTON_PIN  0  // GPIO0, pin 18, D3
-#define LED_PIN     13  // GPIO2, pin 17, D4
-#define RELAY_PIN   12  // GPIO5, pin 20, D1 (SCL)
+#define BUTTON_PIN  0  // GPIO0,  pin 15
+#define LED_PIN    13  // GPIO13, pin 12
+#define RELAY_PIN  12  // GPIO12, pin 6
+#define LEDON  LOW
+#define LEDOFF HIGH
 #endif
 
 //--WiFiClient espClient;
