@@ -20,7 +20,10 @@ void localMQTTCallback(char* topic, byte* payload, unsigned int length) {
     {
       sendStatus = true;
     }
-
+    else if (! strncasecmp_P((char *)payload, "wifi_config", length))
+    {
+      configWifi = true;
+    }
   } 
   else if (!strcmp(topic, pingSTopic.c_str()))
   // Ping action
