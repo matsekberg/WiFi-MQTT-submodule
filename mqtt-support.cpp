@@ -8,7 +8,7 @@ void localMQTTCallback(char* topic, byte* payload, unsigned int length) {
     {
       desiredRelayState = 1;
     }
-    else if ((char)payload[0] == '0' || ! strncasecmp_P((char *)payload, PL_OPFF, length))
+    else if ((char)payload[0] == '0' || ! strncasecmp_P((char *)payload, PL_OFF, length))
     {
       desiredRelayState = 0;
     }
