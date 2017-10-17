@@ -52,6 +52,14 @@
 #define LEDOFF HIGH
 #endif
 
+#ifdef WEMOS
+#define BUTTON_PIN  0  // GPIO0,  pin 15
+#define LED_PIN    13  // GPIO13, pin 12
+#define RELAY_PIN  12  // GPIO12, pin 6
+#define LEDON  LOW
+#define LEDOFF HIGH
+#endif
+
 //--WiFiClient espClient;
 PubSubClient client(espClient);
 unsigned long uptime = 0;

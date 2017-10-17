@@ -4,19 +4,19 @@ void localMQTTCallback(char* topic, byte* payload, unsigned int length) {
   // Relay actions
   if (!strcmp(topic, actionSTopic.c_str()) || !strcmp(topic, groupActionSTopic.c_str()))
   {
-    if ((char)payload[0] == '1' || ! strncasecmp_P((char *)payload, "on", length))
+    if ((char)payload[0] == '1' || ! strncasecmp_P((char *)payload, PL_ON, length))
     {
       desiredRelayState = 1;
     }
-    else if ((char)payload[0] == '0' || ! strncasecmp_P((char *)payload, "off", length))
+    else if ((char)payload[0] == '0' || ! strncasecmp_P((char *)payload, PL_OPFF, length))
     {
       desiredRelayState = 0;
     }
-    else if ((char)payload[0] == 'X' || ! strncasecmp_P((char *)payload, "toggle", length))
+    else if ((char)payload[0] == 'X' || ! strncasecmp_P((char *)payload, PL_TOGGLE, length))
     {
       desiredRelayState = !desiredRelayState;
     }
-    else if ((char)payload[0] == 'S' || ! strncasecmp_P((char *)payload, "status", length))
+    else if ((char)payload[0] == 'S' || ! strncasecmp_P((char *)payload, PL_STATUS, length))
     {
       sendStatus = true;
     }
@@ -123,7 +123,7 @@ void mqttPublish(void) {
     // Relay state is updated via the interrupt *OR* the MQTT callback.
   if (relayState != desiredRelayState) {
     Serial.print(F("Chg state to "));
-    Serial.println(desiredRelayState);
+    Serial.println(desiredRelayState == 0 ? PL_OFF : PL_ON);
 
     digitalWrite(RELAY_PIN, desiredRelayState);
     relayState = desiredRelayState;
@@ -144,7 +144,7 @@ void mqttPublish(void) {
 
   // publish event if touched
   if (sendEvent) {
-    const char* payload = (relayState == 0) ? "0" : "1";
+    const char* payload = (relayState == 0) ? PL_OFF : PL_ON;
     Serial.print(F("MQTT pub: "));
     Serial.print(payload);
     Serial.print(F(" to "));
@@ -160,7 +160,7 @@ void mqttPublish(void) {
 
   // publish state when requested to do so
   if (sendStatus) {
-    const char* payload = (relayState == 0) ? "0" : "1";
+    const char* payload = (relayState == 0) ? PL_OFF : PL_ON;
     Serial.print(F("MQTT pub: "));
     Serial.print(payload);
     Serial.print(F(" to "));
