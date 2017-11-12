@@ -63,10 +63,11 @@ void mqttLoop() {
 
 
 void mqttPublishMessage(const char* topic, const char* payload) {
-  digitalWrite(LED_PIN, HIGH);
+  // turn green LED off while transmitting
+  digitalWrite(LED_PIN, LEDOFF);
   Serial.print(F("MQTT pub: "));
   Serial.print(topic);
-  Serial.print(F(" to "));
+  Serial.print(F(" = "));
   Serial.println(payload);
   client.publish(topic, payload);
   delay(50);
@@ -112,9 +113,9 @@ void mqttCheckConnection(void) {
 void mqttUpdateLED(void) {
   //Set the status LED to ON if we are connected to the MQTT server
   if (client.connected())
-    digitalWrite(LED_PIN, LOW);
+    digitalWrite(LED_PIN, LEDON);
   else
-    digitalWrite(LED_PIN, HIGH);
+    digitalWrite(LED_PIN, LEDON);
 }
 
 
@@ -133,11 +134,11 @@ void mqttPublish(void) {
 
   if (sendPong)
   {
-    Serial.print(F("MQTT pub: "));
+    //Serial.print(F("MQTT pub: "));
     String meta = getDeviceMeta(CONFIG_VERSION);
-    Serial.print(meta);
-    Serial.print(F(" to "));
-    Serial.println(pongMetaTopic);
+    //Serial.print(meta);
+    //Serial.print(F(" to "));
+    //Serial.println(pongMetaTopic);
     mqttPublishMessage(pongMetaTopic.c_str(), meta.c_str());
     sendPong = false;
   }
@@ -145,9 +146,9 @@ void mqttPublish(void) {
   // publish event if touched
   if (sendEvent) {
     const char* payload = (relayState == 0) ? PL_OFF : PL_ON;
-    Serial.print(F("MQTT pub: "));
-    Serial.print(payload);
-    Serial.print(F(" to "));
+    //Serial.print(F("MQTT pub: "));
+    //Serial.print(payload);
+    //Serial.print(F(" to "));
     if (sendGroupEventTopic) {
       Serial.println(groupEventTopic);
       mqttPublishMessage(groupEventTopic.c_str(), payload);
@@ -161,10 +162,10 @@ void mqttPublish(void) {
   // publish state when requested to do so
   if (sendStatus) {
     const char* payload = (relayState == 0) ? PL_OFF : PL_ON;
-    Serial.print(F("MQTT pub: "));
-    Serial.print(payload);
-    Serial.print(F(" to "));
-    Serial.println(statusTopic);
+    //Serial.print(F("MQTT pub: "));
+    //Serial.print(payload);
+    //Serial.print(F(" to "));
+    //Serial.println(statusTopic);
     mqttPublishMessage(statusTopic.c_str(), payload);
     sendStatus = false;
   }
